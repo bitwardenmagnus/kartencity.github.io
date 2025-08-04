@@ -1,0 +1,12 @@
+#flashlightBtn {
+  background-color: rgba(255, 255, 255, 0.1); /* leicht weiß, fast transparent */
+  color: white;
+  font-family: 'Roboto', sans-serif;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 10px;
+  padding: 10px 20px;
+  backdrop-filter: blur(10px); /* das macht den „Glas“-Effekt */
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
