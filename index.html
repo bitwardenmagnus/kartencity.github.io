@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Flashlight Map</title>
-  <link href="https://unpkg.com/maplibre-gl@3.5.0/dist/maplibre-gl.css" rel="stylesheet" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Taschenlampenkarte mit MapTiler SDK</title>
+  <script src="https://cdn.maptiler.com/maptiler-sdk-js/v3.6.1/maptiler-sdk.umd.min.js"></script>
+  <link href="https://cdn.maptiler.com/maptiler-sdk-js/v3.6.1/maptiler-sdk.css" rel="stylesheet" />
   <style>
     html, body {
       margin: 0;
@@ -16,9 +17,9 @@
     #map {
       position: absolute;
       top: 0;
-      left: 0;
+      bottom: 0;
       width: 100%;
-      height: 100%;
+      z-index: 0;
     }
 
     #darkOverlay {
@@ -28,7 +29,7 @@
       width: 100%;
       height: 100%;
       pointer-events: none;
-      background: radial-gradient(circle 100px at var(--x, 50%) var(--y, 50%), transparent 0%, rgba(0,0,0,0.85) 100%);
+      background: radial-gradient(circle 100px at var(--x, 50%) var(--y, 50%), transparent 0%, rgba(0, 0, 0, 0.85) 100%);
       opacity: 0;
       transition: opacity 0.3s ease;
       z-index: 2;
@@ -63,48 +64,54 @@
 </head>
 <body>
 
-<div id="map"></div>
-<div id="darkOverlay"></div>
-<button id="flashlightBtn">Flashlight</button>
+  <div id="map"></div>
+  <div id="darkOverlay"></div>
+  <button id="flashlightBtn">Flashlight</button>
 
-<script src="https://unpkg.com/maplibre-gl@3.5.0/dist/maplibre-gl.js"></script>
-<script>
-  const map = new maplibregl.Map({
-    container: 'map',
-    style: `https://api.maptiler.com/maps/streets/style.json?key=U8w4eE0WpPoxijPRqwC8`,
-    center: [0, 0],
-    zoom: 1
-  });
+  <script>
+    // Initialisiere MapTiler SDK
+    maptilersdk.config.apiKey = 'U8w4eE0WpPoxijPRqwC8';
 
-  const overlay = document.getElementById('darkOverlay');
-  const button = document.getElementById('flashlightBtn');
+    const map = new maptilersdk.Map({
+      container: 'map',
+      style: maptilersdk.MapStyle.STREETS,
+      center: [0, 0],
+      zoom: 2
+    });
 
-  let flashlightOn = false;
+    // Taschenlampen-Overlay
+    const overlay = document.getElementById('darkOverlay');
+    const button = document.getElementById('flashlightBtn');
+    let flashlightOn = false;
 
-  setTimeout(() => {
-    button.classList.add('show');
-  }, 3000);
+    // Button nach 3 Sekunden anzeigen
+    setTimeout(() => {
+      button.classList.add('show');
+    }, 3000);
 
-  button.addEventListener('click', () => {
-    flashlightOn = !flashlightOn;
-    overlay.style.opacity = flashlightOn ? 1 : 0;
-    button.textContent = flashlightOn ? 'Turn off' : 'Flashlight';
-  });
+    // Klick auf Button → Overlay an/aus
+    button.addEventListener('click', () => {
+      flashlightOn = !flashlightOn;
+      overlay.style.opacity = flashlightOn ? 1 : 0;
+      button.textContent = flashlightOn ? 'Turn off' : 'Flashlight';
+    });
 
-  document.addEventListener('mousemove', (e) => {
-    if (flashlightOn) {
-      overlay.style.setProperty('--x', `${e.clientX}px`);
-      overlay.style.setProperty('--y', `${e.clientY}px`);
-    }
-  });
+    // Mausbewegung → Lichtkreis bewegen
+    document.addEventListener('mousemove', (e) => {
+      if (flashlightOn) {
+        overlay.style.setProperty('--x', `${e.clientX}px`);
+        overlay.style.setProperty('--y', `${e.clientY}px`);
+      }
+    });
 
-  document.addEventListener('touchmove', (e) => {
-    if (flashlightOn && e.touches[0]) {
-      overlay.style.setProperty('--x', `${e.touches[0].clientX}px`);
-      overlay.style.setProperty('--y', `${e.touches[0].clientY}px`);
-    }
-  });
-</script>
+    // Touchbewegung → Lichtkreis bewegen (Mobile)
+    document.addEventListener('touchmove', (e) => {
+      if (flashlightOn && e.touches[0]) {
+        overlay.style.setProperty('--x', `${e.touches[0].clientX}px`);
+        overlay.style.setProperty('--y', `${e.touches[0].clientY}px`);
+      }
+    });
+  </script>
 
 </body>
 </html>
