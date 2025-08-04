@@ -1,2 +1,0 @@
-# kartencity.github.io
-yes
