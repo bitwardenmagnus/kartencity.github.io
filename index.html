@@ -1,33 +1,115 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>kartencity</title>
-    <style>
-        html, body {
-            margin: 0;
-            padding: 0;
-            height: 100%;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>kartencity</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      overflow: hidden;
+      font-family: sans-serif;
+    }
 
-        iframe {
-            border: none;
-            width: 100%;
-            height: 100%;
-            display: block;
-        }
-    </style>
+    iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+      display: block;
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: 0;
+    }
+
+    #darkOverlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      background: radial-gradient(circle 100px at var(--x, 50%) var(--y, 50%), transparent 0%, rgba(0,0,0,0.8) 100%);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      z-index: 2;
+    }
+
+    #flashlightBtn {
+      position: fixed;
+      bottom: -60px;
+      left: 20px;
+      z-index: 3;
+      padding: 10px 20px;
+      background-color: #fff;
+      border: none;
+      border-radius: 5px;
+      font-weight: bold;
+      cursor: pointer;
+      box-shadow: 0 0 10px rgba(0,0,0,0.3);
+      transition: bottom 0.5s ease;
+    }
+
+    #flashlightBtn.show {
+      bottom: 20px;
+    }
+
+    /* Mobile: Button zentriert unten */
+    @media (max-width: 600px) {
+      #flashlightBtn {
+        left: 50%;
+        transform: translateX(-50%);
+      }
+    }
+  </style>
 </head>
 <body>
 
-  <script src="https://unpkg.com/cursor-effects@latest/dist/browser.js"></script>
+  <!-- Map -->
+  <iframe src="https://api.maptiler.com/maps/019876d4-02b4-79e3-95d5-8dd44ba53034/?key=U8w4eE0WpPoxijPRqwC8#1.0/0.00000/0.00000"></iframe>
+
+  <!-- Dark Overlay -->
+  <div id="darkOverlay"></div>
+
+  <!-- Flashlight Button -->
+  <button id="flashlightBtn">Flashlight</button>
+
   <script>
-    new cursoreffects.rainbowCursor();
+    const overlay = document.getElementById('darkOverlay');
+    const button = document.getElementById('flashlightBtn');
+
+    let flashlightOn = false;
+
+    // Button nach 3 Sekunden anzeigen
+    setTimeout(() => {
+      button.classList.add('show');
+    }, 3000);
+
+    // Overlay-Toggle beim Klick
+    button.addEventListener('click', () => {
+      flashlightOn = !flashlightOn;
+      overlay.style.opacity = flashlightOn ? 1 : 0;
+      button.textContent = flashlightOn ? 'Turn off' : 'Flashlight';
+    });
+
+    // Taschenlampen-Effekt: Mausposition verfolgen
+    document.addEventListener('mousemove', (e) => {
+      if (flashlightOn) {
+        overlay.style.setProperty('--x', `${e.clientX}px`);
+        overlay.style.setProperty('--y', `${e.clientY}px`);
+      }
+    });
+
+    // Touch für mobile Geräte
+    document.addEventListener('touchmove', (e) => {
+      if (flashlightOn && e.touches[0]) {
+        overlay.style.setProperty('--x', `${e.touches[0].clientX}px`);
+        overlay.style.setProperty('--y', `${e.touches[0].clientY}px`);
+      }
+    });
   </script>
-    
-    <!-- Vollbild-Karte -->
-    <iframe src="https://api.maptiler.com/maps/019876d4-02b4-79e3-95d5-8dd44ba53034/?key=U8w4eE0WpPoxijPRqwC8#1.0/0.00000/0.00000"></iframe>
 
 </body>
 </html>
